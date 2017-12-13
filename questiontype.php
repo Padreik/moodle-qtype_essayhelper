@@ -21,6 +21,12 @@
  * @subpackage essayhelper
  * @copyright  2017 Philippe Girard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2005 Mark Nielsen
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -33,6 +39,10 @@ require_once($CFG->libdir . '/questionlib.php');
  * The essay for correciton helper question type.
  *
  * @copyright  2017 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @copyright  2005 Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper extends question_type {
@@ -62,29 +72,26 @@ class qtype_essayhelper extends question_type {
             $options->id = $DB->insert_record('qtype_essayhelper_options', $options);
         }
 
-        $options->responseformat = $formdata->responseformat;
         $options->responserequired = $formdata->responserequired;
         $options->responsefieldlines = $formdata->responsefieldlines;
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
                 $context, 'qtype_essay', 'graderinfo', $formdata->id);
         $options->graderinfoformat = $formdata->graderinfo['format'];
-        $options->responsetemplate = $formdata->responsetemplate['text'];
-        $options->responsetemplateformat = $formdata->responsetemplate['format'];
-        $options->officialanswer = $formdata->officialanswer['text'];
-        $options->officialanswerformat = $formdata->officialanswer['format'];
+        $options->responsetemplate = $formdata->responsetemplate;
+        $options->officialanswer = $formdata->officialanswer;
         $options->keywords = $formdata->keywords;
         $DB->update_record('qtype_essayhelper_options', $options);
     }
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
-        $question->responseformat = $questiondata->options->responseformat;
         $question->responserequired = $questiondata->options->responserequired;
         $question->responsefieldlines = $questiondata->options->responsefieldlines;
         $question->graderinfo = $questiondata->options->graderinfo;
         $question->graderinfoformat = $questiondata->options->graderinfoformat;
         $question->responsetemplate = $questiondata->options->responsetemplate;
-        $question->responsetemplateformat = $questiondata->options->responsetemplateformat;
+        $question->keywords = $questiondata->options->keywords;
+        $question->officialanswer = $questiondata->options->officialanswer;
     }
 
     public function delete_question($questionid, $contextid) {
@@ -100,7 +107,6 @@ class qtype_essayhelper extends question_type {
      */
     public function response_formats() {
         return array(
-            'editor' => get_string('formateditor', 'qtype_essay'),
             'plain' => get_string('formatplain', 'qtype_essay'),
             'monospaced' => get_string('formatmonospaced', 'qtype_essay'),
         );

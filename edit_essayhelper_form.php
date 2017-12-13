@@ -21,6 +21,12 @@
  * @subpackage essayhelper
  * @copyright  2017 Philippe Girard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,6 +38,10 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @copyright  2017 Philippe Girard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @copyright  2007 Jamie Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper_edit_form extends question_edit_form {
 
@@ -40,8 +50,8 @@ class qtype_essayhelper_edit_form extends question_edit_form {
 
         $mform->addElement('header', 'essayhelper', get_string('essayhelperheader', 'qtype_essayhelper'));
         $mform->setExpanded('essayhelper');
-        $mform->addElement('editor', 'officialanswer', get_string('officialanswer', 'qtype_essayhelper'),
-            array('rows' => 10), $this->editoroptions);
+        $mform->addElement('textarea', 'officialanswer', get_string('officialanswer', 'qtype_essayhelper'),
+            array('rows' => 10, 'cols' => 100));
         $mform->addElement('textarea', 'keywords', get_string('keywords', 'qtype_essayhelper'),
             array('rows' => 10, 'cols' => 60));
         $mform->addHelpButton('keywords', 'keywords', 'qtype_essayhelper');
@@ -49,23 +59,17 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $mform->addElement('header', 'responseoptions', get_string('responseoptions', 'qtype_essay'));
         $mform->setExpanded('responseoptions');
 
-        $mform->addElement('select', 'responseformat',
-                get_string('responseformat', 'qtype_essay'), $qtype->response_formats());
-        $mform->setDefault('responseformat', 'editor');
-
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
         $mform->setDefault('responserequired', 1);
-        $mform->disabledIf('responserequired', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('select', 'responsefieldlines',
                 get_string('responsefieldlines', 'qtype_essay'), $qtype->response_sizes());
         $mform->setDefault('responsefieldlines', 15);
-        $mform->disabledIf('responsefieldlines', 'responseformat', 'eq', 'noinline');
 
         $mform->addElement('header', 'responsetemplateheader', get_string('responsetemplateheader', 'qtype_essay'));
-        $mform->addElement('editor', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
-                array('rows' => 10),  array_merge($this->editoroptions, array('maxfiles' => 0)));
+        $mform->addElement('textarea', 'responsetemplate', get_string('responsetemplate', 'qtype_essay'),
+                array('rows' => 10, 'cols' => 100));
         $mform->addHelpButton('responsetemplate', 'responsetemplate', 'qtype_essay');
 
         $mform->addElement('header', 'graderinfoheader', get_string('graderinfoheader', 'qtype_essay'));
@@ -81,7 +85,6 @@ class qtype_essayhelper_edit_form extends question_edit_form {
             return $question;
         }
 
-        $question->responseformat = $question->options->responseformat;
         $question->responserequired = $question->options->responserequired;
         $question->responsefieldlines = $question->options->responsefieldlines;
 
@@ -99,15 +102,8 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $question->graderinfo['format'] = $question->options->graderinfoformat;
         $question->graderinfo['itemid'] = $draftid;
 
-        $question->responsetemplate = array(
-            'text' => $question->options->responsetemplate,
-            'format' => $question->options->responsetemplateformat,
-        );
-
-        $question->officialanswer = array(
-            'text' => $question->options->officialanswer,
-            'format' => $question->options->officialanswerformat,
-        );
+        $question->responsetemplate = $question->options->responsetemplate;
+        $question->officialanswer = $question->options->officialanswer;
         $question->keywords = $question->options->keywords;
 
         return $question;

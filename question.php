@@ -21,6 +21,12 @@
  * @subpackage essayhelper
  * @copyright  2017 Philippe Girard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -32,6 +38,10 @@ require_once($CFG->dirroot . '/question/type/questionbase.php');
  * Represents an essay for correction helper question.
  *
  * @copyright  2017 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper_question extends question_with_responses {
@@ -46,7 +56,8 @@ class qtype_essayhelper_question extends question_with_responses {
     public $graderinfo;
     public $graderinfoformat;
     public $responsetemplate;
-    public $responsetemplateformat;
+
+    public $keywords;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
@@ -57,19 +68,18 @@ class qtype_essayhelper_question extends question_with_responses {
      * @return qtype_essay_format_renderer_base the response-format-specific renderer.
      */
     public function get_format_renderer(moodle_page $page) {
-        return $page->get_renderer('qtype_essayhelper', 'format_' . $this->responseformat);
+        return $page->get_renderer('qtype_essayhelper', 'format_plain');
     }
 
     public function get_expected_data() {
         $expecteddata = array('answer' => PARAM_RAW);
-        $expecteddata['answerformat'] = PARAM_ALPHANUMEXT;
         return $expecteddata;
     }
 
     public function summarise_response(array $response) {
         if (isset($response['answer'])) {
             return question_utils::to_plain_text($response['answer'],
-                    $response['answerformat'], array('para' => false));
+                FORMAT_PLAIN, array('para' => false));
         } else {
             return null;
         }

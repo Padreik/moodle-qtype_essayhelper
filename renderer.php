@@ -21,6 +21,12 @@
  * @subpackage essayhelper
  * @copyright  2017 Philippe Girard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @package    qtype
+ * @subpackage essay
+ * @copyright  2009 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,6 +37,10 @@ defined('MOODLE_INTERNAL') || die();
  * Generates the output for essay for correction helper questions.
  *
  * @copyright  2017 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
+ * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper_renderer extends qtype_renderer {
@@ -88,7 +98,7 @@ class qtype_essayhelper_renderer extends qtype_renderer {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
+abstract class qtype_essayhelper_format_renderer_base extends plugin_renderer_base {
     /**
      * Render the students respone when the question is in read-only mode.
      * @param string $name the variable name this input edits.
@@ -119,131 +129,6 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
     protected abstract function class_name();
 }
 
-/**
- * An essay format renderer for essays where the student should use the HTML
- * editor without the file picker.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class qtype_essay_format_editor_renderer extends plugin_renderer_base {
-    protected function class_name() {
-        return 'qtype_essay_editor';
-    }
-
-    public function response_area_read_only($name, $qa, $step, $lines, $context) {
-        return html_writer::tag('div', $this->prepare_response($name, $qa, $step, $context),
-                array('class' => $this->class_name() . ' qtype_essay_response readonly'));
-    }
-
-    public function response_area_input($name, $qa, $step, $lines, $context) {
-        global $CFG;
-        require_once($CFG->dirroot . '/repository/lib.php');
-
-        $inputname = $qa->get_qt_field_name($name);
-        $responseformat = $step->get_qt_var($name . 'format');
-        $id = $inputname . '_id';
-
-        $editor = editors_get_preferred_editor($responseformat);
-        $strformats = format_text_menu();
-        $formats = $editor->get_supported_formats();
-        foreach ($formats as $fid) {
-            $formats[$fid] = $strformats[$fid];
-        }
-
-        list($draftitemid, $response) = $this->prepare_response_for_editing(
-                $name, $step, $context);
-
-        $editor->set_text($response);
-        $editor->use_editor($id, $this->get_editor_options($context),
-                $this->get_filepicker_options($context, $draftitemid));
-
-        $output = '';
-        $output .= html_writer::start_tag('div', array('class' =>
-                $this->class_name() . ' qtype_essay_response'));
-
-        $output .= html_writer::tag('div', html_writer::tag('textarea', s($response),
-                array('id' => $id, 'name' => $inputname, 'rows' => $lines, 'cols' => 60)));
-
-        $output .= html_writer::start_tag('div');
-        if (count($formats) == 1) {
-            reset($formats);
-            $output .= html_writer::empty_tag('input', array('type' => 'hidden',
-                    'name' => $inputname . 'format', 'value' => key($formats)));
-
-        } else {
-            $output .= html_writer::label(get_string('format'), 'menu' . $inputname . 'format', false);
-            $output .= ' ';
-            $output .= html_writer::select($formats, $inputname . 'format', $responseformat, '');
-        }
-        $output .= html_writer::end_tag('div');
-
-        $output .= $this->filepicker_html($inputname, $draftitemid);
-
-        $output .= html_writer::end_tag('div');
-        return $output;
-    }
-
-    /**
-     * Prepare the response for read-only display.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt $qa the question attempt being display.
-     * @param question_attempt_step $step the current step.
-     * @param object $context the context the attempt belongs to.
-     * @return string the response prepared for display.
-     */
-    protected function prepare_response($name, question_attempt $qa,
-            question_attempt_step $step, $context) {
-        if (!$step->has_qt_var($name)) {
-            return '';
-        }
-
-        $formatoptions = new stdClass();
-        $formatoptions->para = false;
-        return format_text($step->get_qt_var($name), $step->get_qt_var($name . 'format'),
-                $formatoptions);
-    }
-
-    /**
-     * Prepare the response for editing.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt_step $step the current step.
-     * @param object $context the context the attempt belongs to.
-     * @return string the response prepared for display.
-     */
-    protected function prepare_response_for_editing($name,
-            question_attempt_step $step, $context) {
-        return array(0, $step->get_qt_var($name));
-    }
-
-    /**
-     * @param object $context the context the attempt belongs to.
-     * @return array options for the editor.
-     */
-    protected function get_editor_options($context) {
-        // Disable the text-editor autosave because quiz has it's own auto save function.
-        return array('context' => $context, 'autosave' => false);
-    }
-
-    /**
-     * @param object $context the context the attempt belongs to.
-     * @param int $draftitemid draft item id.
-     * @return array filepicker options for the editor.
-     */
-    protected function get_filepicker_options($context, $draftitemid) {
-        return array('return_types'  => FILE_INTERNAL | FILE_EXTERNAL);
-    }
-
-    /**
-     * @param string $inputname input field name.
-     * @param int $draftitemid draft file area itemid.
-     * @return string HTML for the filepicker, if used.
-     */
-    protected function filepicker_html($inputname, $draftitemid) {
-        return '';
-    }
-}
-
 
 /**
  * An essay format renderer for essays where the student should use a plain
@@ -252,7 +137,7 @@ class qtype_essay_format_editor_renderer extends plugin_renderer_base {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_format_plain_renderer extends plugin_renderer_base {
+class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
     /**
      * @return string the HTML for the textarea.
      */
@@ -268,7 +153,83 @@ class qtype_essay_format_plain_renderer extends plugin_renderer_base {
     }
 
     public function response_area_read_only($name, $qa, $step, $lines, $context) {
-        return $this->textarea($step->get_qt_var($name), $lines, array('readonly' => 'readonly'));
+        $studentAnswer = $step->get_qt_var($name).'';
+        include('php-stemmer/src/Utf8.php');
+        include('php-stemmer/src/Stemmer.php');
+        include('php-stemmer/src/Stem.php');
+        include('php-stemmer/src/French.php');
+        $answerWords = $this->stem($studentAnswer);
+
+        $question = $qa->get_question();
+        $keywords = array_keys($this->stem($question->keywords));
+
+        $usedKeywords = array_intersect(array_keys($answerWords), $keywords);
+
+        foreach ($usedKeywords as $keyword) {
+            $words = $answerWords[$keyword];
+            foreach ($words as $word) {
+                $studentAnswer = str_replace($word, '<b><u>' . $word . '</u></b>', $studentAnswer);
+            }
+        }
+
+        if ((has_capability("mod/quiz:grade", $context) || has_capability("mod/quiz:regrade", $context)) &&
+            (array_key_exists('mode', $_GET) && $_GET['mode'] == 'grading')) {
+            $output = '';
+            $output .= html_writer::start_tag('div', array('class' => 'row'));
+            $output .= html_writer::start_tag('div', array('class' => 'col-sm-6'));
+            $output .= html_writer::start_tag('h5');
+            $output .= format_text('Réponse de l\'étudiant', FORMAT_PLAIN);
+            $output .= html_writer::end_tag('h5');
+            $output .= nl2br($studentAnswer);
+            $output .= html_writer::end_tag('div');
+            $output .= html_writer::start_tag('div', array('class' => 'col-sm-6'));
+            $output .= html_writer::start_tag('h5');
+            $output .= format_text('Réponse de l\'enseignant', FORMAT_PLAIN);
+            $output .= html_writer::end_tag('h5');
+            $output .= format_text($question->officialanswer, FORMAT_PLAIN);
+            $output .= html_writer::end_tag('div');
+            $output .= html_writer::end_tag('div');
+            return $output;
+        }
+        else {
+            return $this->textarea($step->get_qt_var($name), $lines, array('readonly' => 'readonly'));
+        }
+    }
+
+    public function stem($sentence) {
+        $stemmer = new Wamania\Snowball\French();
+        $words = preg_split('/(\s|\')/', preg_replace('/[^[:alnum:][:space:]]/u', ' ', $sentence));
+        $stems = array();
+        foreach ($words as $word) {
+            if ($word) {
+                if (Wamania\Snowball\Utf8::check($word)) {
+                    $stem = $stemmer->stem($word);
+                    if (isset($stems[$stem])) {
+                        if (!in_array($word, $stems[$stem])) {
+                            $stems[$stem][] = $word;
+                        }
+                    } else {
+                        $stems[$stem] = array($word);
+                    }
+                } else {
+                    $stems[] = $word;
+                }
+            }
+        }
+        // Remove empty elements in the array
+        //$stems = array_filter($stems, function($value) { return $value !== ''; });
+        return $stems;
+    }
+
+    public function insert_in_array($key, $value, $array) {
+        if (isset($array[$key])) {
+            if (!in_array($value, $array[$key])) {
+                $array[$key][] = $value;
+            }
+        } else {
+            $array[$key] = array($value);
+        }
+        return $array;
     }
 
     public function response_area_input($name, $qa, $step, $lines, $context) {
@@ -288,7 +249,7 @@ class qtype_essay_format_plain_renderer extends plugin_renderer_base {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_format_monospaced_renderer extends qtype_essay_format_plain_renderer {
+class qtype_essayhelper_format_monospaced_renderer extends qtype_essayhelper_format_plain_renderer {
     protected function class_name() {
         return 'qtype_essay_monospaced';
     }

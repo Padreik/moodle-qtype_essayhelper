@@ -14,8 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * Version information for the essay (for correction helper) question type.
+ * Stemming class for correction helper question renderer class.
  *
  * @package    qtype
  * @subpackage essayhelper
@@ -23,11 +26,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+class qtype_essayhelper_stemmer {
 
-$plugin->component = 'qtype_essayhelper';
-$plugin->version   = 2017113001;
-
-$plugin->requires  = 2015111600;
-
-$plugin->maturity  = MATURITY_ALPHA;
+}

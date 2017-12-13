@@ -1,0 +1,3 @@
+[submodule "php-stemmer"]
+	path = php-stemmer
+	url = https://github.com/wamania/php-stemmer.git
