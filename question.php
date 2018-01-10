@@ -57,6 +57,7 @@ class qtype_essayhelper_question extends question_with_responses {
     public $graderinfoformat;
     public $responsetemplate;
 
+    public $officialanswer;
     public $keywords;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
