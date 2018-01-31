@@ -33,3 +33,5 @@ $string['pluginname_link'] = 'question/type/essayhelper';
 $string['pluginnameadding'] = 'Ajouter une question à développement avec aide à la correction';
 $string['pluginnameediting'] = 'Modifier une question à développement avec aide à la correction';
 $string['pluginnamesummary'] = 'Permet une réponse de quelques phrases ou paragraphes. Doit être corrigé manuellement.';
+$string['studentanswer'] = 'Réponse de l\'étudiant';
+$string['teacheranswer'] = 'Réponse de l\'enseignant';

@@ -33,3 +33,5 @@ $string['pluginname_link'] = 'question/type/essayhelper';
 $string['pluginnameadding'] = 'Adding an Essay with correction helper question';
 $string['pluginnameediting'] = 'Editing an Essay with correction helper question';
 $string['pluginnamesummary'] = 'Allows a response of a few sentences or paragraphs. This must then be manually graded.';
+$string['studentanswer'] = 'Student answer';
+$string['teacheranswer'] = 'Teacher answer';

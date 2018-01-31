@@ -8,6 +8,7 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Foreign key linking to the question table."/>
+        <FIELD NAME="responseformat" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="plain" SEQUENCE="false" COMMENT="The type of input area students should be given for their response."/>
         <FIELD NAME="responserequired" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Nonzero if an inline text response is optional"/>
         <FIELD NAME="responsefieldlines" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="15" SEQUENCE="false" COMMENT="Approximate height, in lines, of the input box the students should be given for their response."/>
         <FIELD NAME="graderinfo" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Information shown to people with permission to manually grade the question, when they are grading."/>

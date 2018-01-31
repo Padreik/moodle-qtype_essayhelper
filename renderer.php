@@ -142,7 +142,7 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
      * @return string the HTML for the textarea.
      */
     protected function textarea($response, $lines, $attributes) {
-        $attributes['class'] = $this->class_name() . ' qtype_essay_response';
+        $attributes['class'] = $this->class_name() . ' qtype_essay_response qtype_essayhelper_response';
         $attributes['rows'] = $lines;
         $attributes['cols'] = 60;
         return html_writer::tag('textarea', s($response), $attributes);
@@ -178,13 +178,13 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('div', array('class' => 'row'));
             $output .= html_writer::start_tag('div', array('class' => 'col-sm-6'));
             $output .= html_writer::start_tag('h5');
-            $output .= format_text('Réponse de l\'étudiant', FORMAT_PLAIN);
+            $output .= format_text(get_string('studentanswer', 'qtype_essayhelper'), FORMAT_PLAIN);
             $output .= html_writer::end_tag('h5');
             $output .= nl2br($studentAnswer);
             $output .= html_writer::end_tag('div');
             $output .= html_writer::start_tag('div', array('class' => 'col-sm-6'));
             $output .= html_writer::start_tag('h5');
-            $output .= format_text('Réponse de l\'enseignant', FORMAT_PLAIN);
+            $output .= format_text(get_string('teacheranswer', 'qtype_essayhelper'), FORMAT_PLAIN);
             $output .= html_writer::end_tag('h5');
             $output .= format_text($question->officialanswer, FORMAT_PLAIN);
             $output .= html_writer::end_tag('div');

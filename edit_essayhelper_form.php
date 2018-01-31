@@ -59,6 +59,10 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $mform->addElement('header', 'responseoptions', get_string('responseoptions', 'qtype_essay'));
         $mform->setExpanded('responseoptions');
 
+        $mform->addElement('select', 'responseformat',
+            get_string('responseformat', 'qtype_essay'), $qtype->response_formats());
+        $mform->setDefault('responseformat', 'editor');
+
         $mform->addElement('select', 'responserequired',
                 get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
         $mform->setDefault('responserequired', 1);
@@ -85,6 +89,7 @@ class qtype_essayhelper_edit_form extends question_edit_form {
             return $question;
         }
 
+        $question->responseformat = $question->options->responseformat;
         $question->responserequired = $question->options->responserequired;
         $question->responsefieldlines = $question->options->responsefieldlines;
 

@@ -72,6 +72,7 @@ class qtype_essayhelper extends question_type {
             $options->id = $DB->insert_record('qtype_essayhelper_options', $options);
         }
 
+        $options->responseformat = $formdata->responseformat;
         $options->responserequired = $formdata->responserequired;
         $options->responsefieldlines = $formdata->responsefieldlines;
         $options->graderinfo = $this->import_or_save_files($formdata->graderinfo,
@@ -85,6 +86,7 @@ class qtype_essayhelper extends question_type {
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
+        $question->responseformat = $questiondata->options->responseformat;
         $question->responserequired = $questiondata->options->responserequired;
         $question->responsefieldlines = $questiondata->options->responsefieldlines;
         $question->graderinfo = $questiondata->options->graderinfo;
