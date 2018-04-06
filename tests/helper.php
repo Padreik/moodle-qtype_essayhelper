@@ -74,7 +74,7 @@ class qtype_essayhelper_test_helper extends question_test_helper {
      * @return qtype_essayhelper_question
      */
     public function make_essayhelper_question_plain() {
-        $q = $this->initialise_essay_question();
+        $q = $this->initialise_essayhelper_question();
         return $q;
     }
 

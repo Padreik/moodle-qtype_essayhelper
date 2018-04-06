@@ -15,8 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the essay question type class.
+ * Unit tests for the essay with correction helper question type class.
  *
+ * @package    qtype
+ * @subpackage essayhelper
+ * @copyright  2018 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
  * @package    qtype
  * @subpackage essay
  * @copyright  2010 The Open University
@@ -27,20 +33,24 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/question/type/essay/questiontype.php');
+require_once($CFG->dirroot . '/question/type/essayhelper/questiontype.php');
 
 
 /**
  * Unit tests for the essay question type class.
  *
+ * @copyright  2018 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_essay_test extends advanced_testcase {
+class qtype_essayhelper_test extends advanced_testcase {
     protected $qtype;
 
     protected function setUp() {
-        $this->qtype = new qtype_essay();
+        $this->qtype = new qtype_essayhelper();
     }
 
     protected function tearDown() {
@@ -55,7 +65,7 @@ class qtype_essay_test extends advanced_testcase {
     }
 
     public function test_name() {
-        $this->assertEquals($this->qtype->name(), 'essay');
+        $this->assertEquals($this->qtype->name(), 'essayhelper');
     }
 
     public function test_can_analyse_responses() {

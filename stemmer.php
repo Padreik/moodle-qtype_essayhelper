@@ -27,5 +27,36 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 class qtype_essayhelper_stemmer {
+    public function stem($sentence, Stemmer $stemmer) {
+        $words = split_words($sentence);
+        $stems = array();
+        foreach ($words as $word) {
+            if ($word) {
+                if (Wamania\Snowball\Utf8::check($word)) {
+                    $stem = $stemmer->stem($word);
+                    if (isset($stems[$stem])) {
+                        if (!in_array($word, $stems[$stem])) {
+                            $stems[$stem][] = $word;
+                        }
+                    } else {
+                        $stems[$stem] = array($word);
+                    }
+                } else {
+                    $stems[] = $word;
+                }
+            }
+        }
+        // Remove empty elements in the array
+        //$stems = array_filter($stems, function($value) { return $value !== ''; });
+        return $stems;
+    }
 
+    /**
+     * @param $sentence
+     * @return string[]|false
+     */
+    protected function split_words($sentence) {
+        $words = preg_split('/(\s|\')/', preg_replace('/[^[:alnum:][:space:]]/u', ' ', $sentence));
+        return $words;
+    }
 }
