@@ -120,6 +120,7 @@ class restore_qtype_essayhelper_plugin extends restore_qtype_plugin {
             $defaultoptions->responsetemplate = '';
             $defaultoptions->keywords = '';
             $defaultoptions->officialanswer = '';
+            $defaultoptions->language = 'en';
             $DB->insert_record('qtype_essay_options', $defaultoptions);
         }
     }

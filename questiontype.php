@@ -33,6 +33,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
+require_once('stemmer.php');
 
 
 /**
@@ -81,6 +82,7 @@ class qtype_essayhelper extends question_type {
         $options->responsetemplate = $formdata->responsetemplate;
         $options->officialanswer = $formdata->officialanswer;
         $options->keywords = $formdata->keywords;
+        $options->language = $formdata->language;
         $DB->update_record('qtype_essayhelper_options', $options);
     }
 
@@ -94,6 +96,7 @@ class qtype_essayhelper extends question_type {
         $question->responsetemplate = $questiondata->options->responsetemplate;
         $question->keywords = $questiondata->options->keywords;
         $question->officialanswer = $questiondata->options->officialanswer;
+        $question->language = $questiondata->options->language;
     }
 
     public function delete_question($questionid, $contextid) {
@@ -133,5 +136,27 @@ class qtype_essayhelper extends question_type {
             $choices[$lines] = get_string('nlines', 'qtype_essay', $lines);
         }
         return $choices;
+    }
+
+    public function stemming_languages_options() {
+        $currentLocale = current_language();
+        $stemmer = new qtype_essayhelper_stemmer();
+        $languages = [];
+        foreach ($stemmer->get_languages_code() as $lang) {
+            $languages[$lang] = Locale::getDisplayName($lang, $currentLocale);
+        }
+        return $languages;
+    }
+
+    public function stemming_languages_default() {
+        $stemmer = new qtype_essayhelper_stemmer();
+        $langCodes = $stemmer->get_languages_code();
+        $currentLang = substr(current_language(), 0, 2);
+        if (in_array($currentLang, $langCodes)) {
+            return $currentLang;
+        }
+        else {
+            return 'en';
+        }
     }
 }

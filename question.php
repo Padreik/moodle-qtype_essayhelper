@@ -59,6 +59,8 @@ class qtype_essayhelper_question extends question_with_responses {
 
     public $officialanswer;
     public $keywords;
+    public $language;
+    public $question;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);

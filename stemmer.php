@@ -17,6 +17,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once('php-stemmer/src/Utf8.php');
+require_once('php-stemmer/src/Stemmer.php');
+require_once('php-stemmer/src/Stem.php');
+
 /**
  * Stemming class for correction helper question renderer class.
  *
@@ -27,8 +31,43 @@ defined('MOODLE_INTERNAL') || die();
  */
 
 class qtype_essayhelper_stemmer {
-    public function stem($sentence, Stemmer $stemmer) {
-        $words = split_words($sentence);
+    protected $languages = array(
+        'da' => 'Danish',
+        'nl' => 'Dutch',
+        'en' => 'English',
+        'fr' => 'French',
+        'de' => 'German',
+        'it' => 'Italian',
+        'no' => 'Norwegian',
+        'pt' => 'Portuguese',
+        'ro' => 'Romanian',
+        'ru' => 'Russian',
+        'es' => 'Spanish',
+        'sv' => 'Swedish'
+    );
+
+    public function get_languages_code() {
+        return array_keys($this->languages);
+    }
+
+    public function stem($sentence, $langCode) {
+        $stemmer = $this->get_stemmer($langCode);
+        return $this->make_stem_array($sentence, $stemmer);
+    }
+
+    protected function get_stemmer($langCode) {
+        if (!isset($this->languages[$langCode])) {
+            $langCode = 'en';
+        }
+        require_once('php-stemmer/src/' . $this->languages[$langCode] . '.php');
+
+        $stemmerClass = "Wamania\\Snowball\\" . $this->languages[$langCode];
+
+        return new $stemmerClass();
+    }
+
+    protected function make_stem_array($sentence, \Wamania\Snowball\Stemmer $stemmer) {
+        $words = $this->split_words($sentence);
         $stems = array();
         foreach ($words as $word) {
             if ($word) {

@@ -26,6 +26,7 @@
 $string['essayhelperheader'] = 'Aide à la correction';
 $string['keywords'] = 'Mots-clés';
 $string['keywords_help'] = 'Chaque mot-clé sera surligné dans la réponse de l\'étudiant. Mettre un mot-clé par ligne.';
+$string['language'] = 'Langue pour la détection de mot-clés';
 $string['officialanswer'] = 'Réponse officielle de l\'enseignant';
 $string['pluginname'] = 'Question à développement avec aide à la correction';
 $string['pluginname_help'] = 'Similaire à Composition, mais la correction manuelle ajoute le surlignage de mots-clés et plus encore.';

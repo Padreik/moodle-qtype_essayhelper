@@ -26,6 +26,7 @@
 $string['essayhelperheader'] = 'Correction helper';
 $string['keywords'] = 'Keywords to highlight in student answer';
 $string['keywords_help'] = 'Each keywords will be higlighted in the student answer. Put one keyword par line.';
+$string['language'] = 'Language for keyword detection';
 $string['officialanswer'] = 'Teacher official answer';
 $string['pluginname'] = 'Essay with correction helper';
 $string['pluginname_help'] = 'Similar to Essay, but manual correction add keywords highlighting and more.';

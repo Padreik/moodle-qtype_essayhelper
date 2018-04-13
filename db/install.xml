@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/essayhelper/db" VERSION="20170418" COMMENT="XMLDB file for Moodle question/type/essayhelper"
+<XMLDB PATH="question/type/essayhelper/db" VERSION="20180413" COMMENT="XMLDB file for Moodle question/type/essayhelper"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
@@ -16,10 +16,11 @@
         <FIELD NAME="responsetemplate" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The template to pre-populate student's response field during attempt."/>
         <FIELD NAME="officialanswer" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Teacher official response, will be compared to student answer."/>
         <FIELD NAME="keywords" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Keywords to be highlighted in student answer."/>
+        <FIELD NAME="language" TYPE="char" LENGTH="2" NOTNULL="true" DEFAULT="en" SEQUENCE="false" COMMENT="Language used for stemming"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="questionid" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+        <KEY NAME="questionid" TYPE="unique" FIELDS="questionid"/>
       </KEYS>
     </TABLE>
   </TABLES>

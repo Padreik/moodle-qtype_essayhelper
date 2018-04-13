@@ -55,6 +55,9 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $mform->addElement('textarea', 'keywords', get_string('keywords', 'qtype_essayhelper'),
             array('rows' => 10, 'cols' => 60));
         $mform->addHelpButton('keywords', 'keywords', 'qtype_essayhelper');
+        $mform->addElement('select', 'language',
+            get_string('language', 'qtype_essayhelper'), $qtype->stemming_languages_options());
+        $mform->setDefault('language', $qtype->stemming_languages_default());
 
         $mform->addElement('header', 'responseoptions', get_string('responseoptions', 'qtype_essay'));
         $mform->setExpanded('responseoptions');
@@ -64,7 +67,7 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $mform->setDefault('responseformat', 'editor');
 
         $mform->addElement('select', 'responserequired',
-                get_string('responserequired', 'qtype_essay'), $qtype->response_required_options());
+                get_string('responserequired', 'qtype_essay'), $qtype->response_required_options(), 'en');
         $mform->setDefault('responserequired', 1);
 
         $mform->addElement('select', 'responsefieldlines',
@@ -110,6 +113,7 @@ class qtype_essayhelper_edit_form extends question_edit_form {
         $question->responsetemplate = $question->options->responsetemplate;
         $question->officialanswer = $question->options->officialanswer;
         $question->keywords = $question->options->keywords;
+        $question->language = $question->options->language;
 
         return $question;
     }

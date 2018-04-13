@@ -153,24 +153,10 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
     }
 
     public function response_area_read_only($name, $qa, $step, $lines, $context) {
-        $studentAnswer = $step->get_qt_var($name).'';
-        include('php-stemmer/src/Utf8.php');
-        include('php-stemmer/src/Stemmer.php');
-        include('php-stemmer/src/Stem.php');
-        include('php-stemmer/src/French.php');
-        $answerWords = $this->stem($studentAnswer);
-
         $question = $qa->get_question();
-        $keywords = array_keys($this->stem($question->keywords));
+        $studentAnswer = $step->get_qt_var($name).'';
 
-        $usedKeywords = array_intersect(array_keys($answerWords), $keywords);
-
-        foreach ($usedKeywords as $keyword) {
-            $words = $answerWords[$keyword];
-            foreach ($words as $word) {
-                $studentAnswer = str_replace($word, '<b><u>' . $word . '</u></b>', $studentAnswer);
-            }
-        }
+        $studentAnswerHighlighted = $this->highlight_keywords($studentAnswer, $question);
 
         if ((has_capability("mod/quiz:grade", $context) || has_capability("mod/quiz:regrade", $context)) &&
             (array_key_exists('mode', $_GET) && $_GET['mode'] == 'grading')) {
@@ -180,7 +166,7 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('h5');
             $output .= format_text(get_string('studentanswer', 'qtype_essayhelper'), FORMAT_PLAIN);
             $output .= html_writer::end_tag('h5');
-            $output .= nl2br($studentAnswer);
+            $output .= nl2br($studentAnswerHighlighted);
             $output .= html_writer::end_tag('div');
             $output .= html_writer::start_tag('div', array('class' => 'col-sm-6'));
             $output .= html_writer::start_tag('h5');
@@ -196,47 +182,29 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
         }
     }
 
-    public function stem($sentence) {
-        $stemmer = new Wamania\Snowball\French();
-        $words = preg_split('/(\s|\')/', preg_replace('/[^[:alnum:][:space:]]/u', ' ', $sentence));
-        $stems = array();
-        foreach ($words as $word) {
-            if ($word) {
-                if (Wamania\Snowball\Utf8::check($word)) {
-                    $stem = $stemmer->stem($word);
-                    if (isset($stems[$stem])) {
-                        if (!in_array($word, $stems[$stem])) {
-                            $stems[$stem][] = $word;
-                        }
-                    } else {
-                        $stems[$stem] = array($word);
-                    }
-                } else {
-                    $stems[] = $word;
-                }
-            }
-        }
-        // Remove empty elements in the array
-        //$stems = array_filter($stems, function($value) { return $value !== ''; });
-        return $stems;
-    }
-
-    public function insert_in_array($key, $value, $array) {
-        if (isset($array[$key])) {
-            if (!in_array($value, $array[$key])) {
-                $array[$key][] = $value;
-            }
-        } else {
-            $array[$key] = array($value);
-        }
-        return $array;
-    }
-
     public function response_area_input($name, $qa, $step, $lines, $context) {
         $inputname = $qa->get_qt_field_name($name);
         return $this->textarea($step->get_qt_var($name), $lines, array('name' => $inputname)) .
                 html_writer::empty_tag('input', array('type' => 'hidden',
                     'name' => $inputname . 'format', 'value' => FORMAT_PLAIN));
+    }
+
+    protected function highlight_keywords($studentAnswer, $question)
+    {
+        $stemmer = new qtype_essayhelper_stemmer();
+
+        $answerWords = $stemmer->stem($studentAnswer, $question->language);
+        $keywords = array_keys($stemmer->stem($question->keywords, $question->language));
+
+        $usedKeywords = array_intersect(array_keys($answerWords), $keywords);
+
+        foreach ($usedKeywords as $keyword) {
+            $words = $answerWords[$keyword];
+            foreach ($words as $word) {
+                $studentAnswer = str_replace($word, '<b><u>' . $word . '</u></b>', $studentAnswer);
+            }
+        }
+        return $studentAnswer;
     }
 }
 
