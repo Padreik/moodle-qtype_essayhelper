@@ -50,9 +50,14 @@ class qtype_essayhelper_stemmer {
         return array_keys($this->languages);
     }
 
+    /**
+     * @param $sentence Sentence to stem
+     * @param $langCode 2 letter language code, if language code unavailable it use "en"
+     * @return array Stemmed word => array(full words)
+     */
     public function stem($sentence, $langCode) {
         $stemmer = $this->get_stemmer($langCode);
-        return $this->make_stem_array($sentence, $stemmer);
+        return $this->make_stem_array($sentence, $stemmer, new Wamania\Snowball\Utf8());
     }
 
     protected function get_stemmer($langCode) {
@@ -66,12 +71,12 @@ class qtype_essayhelper_stemmer {
         return new $stemmerClass();
     }
 
-    protected function make_stem_array($sentence, \Wamania\Snowball\Stemmer $stemmer) {
+    protected function make_stem_array($sentence, \Wamania\Snowball\Stemmer $stemmer, Wamania\Snowball\Utf8 $utf8) {
         $words = $this->split_words($sentence);
         $stems = array();
         foreach ($words as $word) {
             if ($word) {
-                if (Wamania\Snowball\Utf8::check($word)) {
+                if ($utf8::check($word)) {
                     $stem = $stemmer->stem($word);
                     if (isset($stems[$stem])) {
                         if (!in_array($word, $stems[$stem])) {
@@ -90,12 +95,12 @@ class qtype_essayhelper_stemmer {
         return $stems;
     }
 
-    /**
-     * @param $sentence
-     * @return string[]|false
-     */
     protected function split_words($sentence) {
-        $words = preg_split('/(\s|\')/', preg_replace('/[^[:alnum:][:space:]]/u', ' ', $sentence));
+        $words = preg_split(
+            '/(\s|\')/',
+            preg_replace('/[^[:alnum:][:space:]]/u', ' ', $sentence),
+            null,
+            PREG_SPLIT_NO_EMPTY);
         return $words;
     }
 }
