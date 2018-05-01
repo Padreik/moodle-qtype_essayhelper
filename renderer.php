@@ -85,55 +85,20 @@ class qtype_essayhelper_renderer extends qtype_renderer {
 
         $question = $qa->get_question();
         return html_writer::nonempty_tag('div', $question->format_text(
-                $question->graderinfo, $question->graderinfo, $qa, 'qtype_essay',
+                $question->graderinfo, $question->graderinfo, $qa, 'qtype_essayhelper',
                 'graderinfo', $question->id), array('class' => 'graderinfo'));
     }
 }
 
 
 /**
- * A base class to abstract out the differences between different type of
- * response format.
- *
- * @copyright  2011 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class qtype_essayhelper_format_renderer_base extends plugin_renderer_base {
-    /**
-     * Render the students respone when the question is in read-only mode.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt $qa the question attempt being display.
-     * @param question_attempt_step $step the current step.
-     * @param int $lines approximate size of input box to display.
-     * @param object $context the context teh output belongs to.
-     * @return string html to display the response.
-     */
-    public abstract function response_area_read_only($name, question_attempt $qa,
-            question_attempt_step $step, $lines, $context);
-
-    /**
-     * Render the students respone when the question is in read-only mode.
-     * @param string $name the variable name this input edits.
-     * @param question_attempt $qa the question attempt being display.
-     * @param question_attempt_step $step the current step.
-     * @param int $lines approximate size of input box to display.
-     * @param object $context the context teh output belongs to.
-     * @return string html to display the response for editing.
-     */
-    public abstract function response_area_input($name, question_attempt $qa,
-            question_attempt_step $step, $lines, $context);
-
-    /**
-     * @return string specific class name to add to the input element.
-     */
-    protected abstract function class_name();
-}
-
-
-/**
- * An essay format renderer for essays where the student should use a plain
+ * An essay with correction helper format renderer for essays where the student should use a plain
  * input box, but with a normal, proportional font.
  *
+ * @copyright  2017 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -142,14 +107,14 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
      * @return string the HTML for the textarea.
      */
     protected function textarea($response, $lines, $attributes) {
-        $attributes['class'] = $this->class_name() . ' qtype_essay_response qtype_essayhelper_response';
+        $attributes['class'] = $this->class_name() . ' qtype_essayhelper_response';
         $attributes['rows'] = $lines;
         $attributes['cols'] = 60;
         return html_writer::tag('textarea', s($response), $attributes);
     }
 
     protected function class_name() {
-        return 'qtype_essay_plain';
+        return 'qtype_essayhelper_plain';
     }
 
     public function response_area_read_only($name, $qa, $step, $lines, $context) {
@@ -157,6 +122,7 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
         $studentAnswer = $step->get_qt_var($name).'';
 
         $studentAnswerHighlighted = $this->highlight_keywords($studentAnswer, $question);
+        $officialAnswerHighlighted = $this->highlight_keywords($question->officialanswer, $question);
 
         if ((has_capability("mod/quiz:grade", $context) || has_capability("mod/quiz:regrade", $context)) &&
             (array_key_exists('mode', $_GET) && $_GET['mode'] == 'grading')) {
@@ -172,7 +138,7 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
             $output .= html_writer::start_tag('h5');
             $output .= format_text(get_string('teacheranswer', 'qtype_essayhelper'), FORMAT_PLAIN);
             $output .= html_writer::end_tag('h5');
-            $output .= format_text($question->officialanswer, FORMAT_PLAIN);
+            $output .= nl2br($officialAnswerHighlighted);
             $output .= html_writer::end_tag('div');
             $output .= html_writer::end_tag('div');
             return $output;
@@ -210,15 +176,20 @@ class qtype_essayhelper_format_plain_renderer extends plugin_renderer_base {
 
 
 /**
- * An essay format renderer for essays where the student should use a plain
- * input box with a monospaced font. You might use this, for example, for a
- * question where the students should type computer code.
+ * An essay for correction helper format renderer for essays where the
+ * student should use a plain input box with a monospaced font. You
+ * might use this, for example, for a question where the students
+ * should type computer code.
  *
+ * @copyright  2017 Philippe Girard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * Inspired by:
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper_format_monospaced_renderer extends qtype_essayhelper_format_plain_renderer {
     protected function class_name() {
-        return 'qtype_essay_monospaced';
+        return 'qtype_essayhelper_monospaced';
     }
 }

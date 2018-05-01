@@ -1,25 +1,25 @@
-.que.essay textarea.qtype_essay_response {
+.que.essayhelper textarea.qtype_essayhelper_response {
     width: 100%;
 }
 
-.que.essay textarea.qtype_essay_response.qtype_essay_plain {
+.que.essayhelper textarea.qtype_essayhelper_response.qtype_essayhelper_plain {
     white-space: pre-wrap;
     font: inherit;
 }
 
-.que.essay textarea.qtype_essay_response.qtype_essay_monospaced {
+.que.essayhelper textarea.qtype_essayhelper_response.qtype_essayhelper_monospaced {
     white-space: pre;
     font-family: Andale Mono, Monaco, Courier New, DejaVu Sans Mono, monospace;
 }
 
-.que.essay .qtype_essay_response {
+.que.essayhelper .qtype_essayhelper_response {
     min-height: 3em;
 }
 
-.que.essay .qtype_essay_response.readonly {
+.que.essayhelper .qtype_essayhelper_response.readonly {
     background-color: white;
 }
 
-.que.essay div.qtype_essay_response textarea {
+.que.essayhelper div.qtype_essayhelper_response textarea {
     width: 100%;
 }

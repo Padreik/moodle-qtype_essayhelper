@@ -38,7 +38,7 @@ require_once($CFG->dirroot . '/question/type/essayhelper/stemmer.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_essayhelper_stemmer_test extends basic_testcase {
-    public function test_get_stemmer() {
+    public function test_get_stemmer_all_languages_exists() {
         $stemmer = new qtype_essayhelper_stemmer();
 
         // Set get_stemmer function accessible
@@ -54,7 +54,7 @@ class qtype_essayhelper_stemmer_test extends basic_testcase {
         }
     }
 
-    public function test_get_stemmer_non_existing() {
+    public function test_get_stemmer_language_non_existing() {
         $stemmer = new qtype_essayhelper_stemmer();
 
         // Set get_stemmer function accessible
@@ -65,21 +65,40 @@ class qtype_essayhelper_stemmer_test extends basic_testcase {
         $this->assertEquals((new \ReflectionClass($langStemmer))->getShortName(), "English");
     }
 
-    public function test_split_words() {
+    public function test_split_words_no_words() {
+        $stemmer = new qtype_essayhelper_stemmer();
+        $split_words = $this->get_protected_function($stemmer, "split_words");
+
+        $this->assertEquals($split_words->invokeArgs($stemmer, array("")), array());
+        $this->assertEquals($split_words->invokeArgs($stemmer, array("-\n    ' %")), array());
+    }
+
+    public function test_split_words_couple_words() {
         $stemmer = new qtype_essayhelper_stemmer();
         $split_words = $this->get_protected_function($stemmer, "split_words");
 
         $this->assertEquals($split_words->invokeArgs($stemmer, array("I love potatoes")), array("I", "love", "potatoes"));
         $this->assertEquals($split_words->invokeArgs($stemmer, array("I+love+potatoes")), array("I", "love", "potatoes"));
         $this->assertEquals($split_words->invokeArgs($stemmer, array("I-love\npotatoes")), array("I", "love", "potatoes"));
-        $this->assertEquals($split_words->invokeArgs($stemmer, array("")), array());
-        $this->assertEquals($split_words->invokeArgs($stemmer, array("-\n    ' %")), array());
+    }
+
+    public function test_split_words_a_lot_of_words() {
+        $stemmer = new qtype_essayhelper_stemmer();
+        $split_words = $this->get_protected_function($stemmer, "split_words");
+
+        $this->assertEquals($split_words->invokeArgs($stemmer,
+            array("strap complex obtainable marked credit women wary educate nation wonder
+              lours singulier musicien bannière lotus actrice premier polluer dans vie")),
+            array("strap", "complex", "obtainable", "marked", "credit", "women", "wary", "educate",
+                "nation", "wonder", "lours", "singulier", "musicien", "bannière", "lotus", "actrice",
+                "premier", "polluer", "dans", "vie"));
     }
 
     public function test_make_stem_array() {
         $stemmer = new qtype_essayhelper_stemmer();
         $make_stem_array = $this->get_protected_function($stemmer, "make_stem_array");
 
+        // The stem for all words will be "test"
         $snowball_stemmer = $this->createMock('\\Wamania\\Snowball\\Stemmer', array('stem'));
         $snowball_stemmer->method('stem')->willReturn('test');
 

@@ -51,10 +51,6 @@ class qtype_essayhelper extends question_type {
         return true;
     }
 
-    public function response_file_areas() {
-        return array('answer');
-    }
-
     public function get_question_options($question) {
         global $DB;
         $question->options = $DB->get_record('qtype_essayhelper_options',

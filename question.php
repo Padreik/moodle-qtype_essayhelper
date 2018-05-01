@@ -71,7 +71,7 @@ class qtype_essayhelper_question extends question_with_responses {
      * @return qtype_essay_format_renderer_base the response-format-specific renderer.
      */
     public function get_format_renderer(moodle_page $page) {
-        return $page->get_renderer('qtype_essayhelper', 'format_plain');
+        return $page->get_renderer('qtype_essayhelper', 'format_' . $this->responseformat);
     }
 
     public function get_expected_data() {
