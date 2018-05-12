@@ -62,9 +62,10 @@ class qtype_essayhelper_test_helper extends question_test_helper {
         $q->responsefieldlines = 10;
         $q->officialanswer = 'Once upon a time, a frog.';
         $q->keywords = 'frog';
+        $q->language = 'en';
         $q->graderinfo = '';
         $q->graderinfoformat = FORMAT_HTML;
-        $q->qtype = question_bank::get_qtype('essay');
+        $q->qtype = question_bank::get_qtype('essayhelper');
 
         return $q;
     }
@@ -92,6 +93,7 @@ class qtype_essayhelper_test_helper extends question_test_helper {
         $fromform->responsetemplate = '';
         $fromform->officialanswer = 'Once upon a time, a frog.';
         $fromform->keywords = 'frog';
+        $fromform->language = 'en';
 
         return $fromform;
     }
@@ -120,6 +122,7 @@ class qtype_essayhelper_test_helper extends question_test_helper {
         $fromform->responsetemplate = '';
         $fromform->officialanswer = 'Once upon a time, a frog.';
         $fromform->keywords = 'frog';
+        $fromform->language = 'en';
 
         return $fromform;
     }
